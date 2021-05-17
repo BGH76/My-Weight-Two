@@ -2,8 +2,10 @@ package com.zybooks.myweighttwo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +17,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     Button createUser;
     EditText username;
@@ -39,21 +39,20 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Cursor data2 = mydb.getPasswordData();
-                ArrayList<String> listData2 = new ArrayList<>();
-                while(data2.moveToNext()){
-                    listData2.add(data2.getString(1));
+                try{
+                    Cursor data2 = mydb.getPasswordData();
+                    ArrayList<String> listData2 = new ArrayList<>();
+                    while(data2.moveToNext()){
+                        listData2.add(data2.getString(1));
+                    }
+                    if(password.getText().toString().equals(listData2.get(0))){
+                        openAppActivity();
+                    }else{
+                        Toast.makeText(getBaseContext(),"Incorrect Password", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception e){
+                    Log.d("Error with loginButton", e.getMessage());
                 }
-                if(password.getText().toString().equals(listData2.get(0))){
-                    Log.d("Your login", "is Working");
-                    openAppActivity();
-                }else{
-                    Toast.makeText(getBaseContext(),"Incorrect Password", Toast.LENGTH_LONG).show();
-                    Log.d("Incorrect", "Password");
-
-                }
-
             }
         });
 

@@ -25,8 +25,6 @@ public class HistoryFragment extends Fragment {
     ArrayList<String> weightList = new ArrayList<>();
     GridView gridView;
 
-
-
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -35,18 +33,19 @@ public class HistoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DatabaseHelper mydb = new DatabaseHelper(getActivity());
-
-
-        Cursor weightData = mydb.getCurrentWeight();
-        weightList.add("Date");
-        weightList.add("Weight");
-        weightList.add("Delete");
-        while (weightData.moveToNext()){
-            weightList.add(weightData.getString(2));
-            weightList.add(weightData.getString(1));
-            weightList.add("x");
+        try{
+            Cursor weightData = mydb.getCurrentWeight();
+            weightList.add("Date");
+            weightList.add("Weight");
+            weightList.add("Delete");
+            while (weightData.moveToNext()){
+                weightList.add(weightData.getString(2));
+                weightList.add(weightData.getString(1));
+                weightList.add("x");
+            }
+        }catch (Exception e){
+            Log.d("Error with History Fragment onCreate, ", e.getMessage());
         }
-
     }
 
     @Override
@@ -58,34 +57,32 @@ public class HistoryFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, weightList);
         gridView.setAdapter(adapter);
 
-
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 DatabaseHelper mydb = new DatabaseHelper(getActivity());
                 String gridItem = gridView.getItemAtPosition(position).toString();
                 if(gridItem.equals("x")){
-                    mydb.deleteRow(gridView.getItemAtPosition(position-1).toString());
-
+                    try {
+                        mydb.deleteRow(gridView.getItemAtPosition(position-1).toString());
+                        adapter.clear();
+                        Cursor weightData = mydb.getCurrentWeight();
+                        weightList.add("Date");
+                        weightList.add("Weight");
+                        weightList.add("Delete");
+                        while (weightData.moveToNext()){
+                            weightList.add(weightData.getString(2));
+                            weightList.add(weightData.getString(1));
+                            weightList.add("x");
+                        }
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(HistoryFragment.this).attach(HistoryFragment.this).commit();
+                    }catch (Exception e){
+                        Log.d("Error deleting item from history grid fragment, ", e.getMessage());
+                    }
                 }
-                adapter.clear();
-                Cursor weightData = mydb.getCurrentWeight();
-                weightList.add("Date");
-                weightList.add("Weight");
-                weightList.add("Delete");
-                while (weightData.moveToNext()){
-                    weightList.add(weightData.getString(2));
-                    weightList.add(weightData.getString(1));
-                    weightList.add("x");
-                }
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(HistoryFragment.this).attach(HistoryFragment.this).commit();
             }
         });
-
         return view;
     }
-
-
 }

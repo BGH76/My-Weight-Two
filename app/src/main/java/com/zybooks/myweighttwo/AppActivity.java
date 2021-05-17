@@ -11,7 +11,9 @@ import android.widget.Button;
 
 public class AppActivity extends AppCompatActivity {
 
-    Button homeButton, historyButton, settingsButton;
+    Button homeButton;
+    Button historyButton;
+    Button settingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +24,7 @@ public class AppActivity extends AppCompatActivity {
         historyButton = (Button) findViewById(R.id.historyButton);
         settingsButton = (Button) findViewById(R.id.settingsButton);
 
-
-
-
         loadFragment(new HomeFragment());
-
-
 
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,10 +46,7 @@ public class AppActivity extends AppCompatActivity {
                 loadFragment(new SettingsFragment());
             }
         });
-
-
     }
-
 
     private void loadFragment(Fragment fragment){
         FragmentManager fm = getSupportFragmentManager();
@@ -61,5 +55,4 @@ public class AppActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
 }

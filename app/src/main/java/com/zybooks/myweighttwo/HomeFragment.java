@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,6 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
-    // Need to calculate BMI and home fragment should be done.
-
     TextView currentWeightValueTextView;
     TextView goalWeightValueTextView;
     TextView weightLostValueView;
@@ -29,7 +28,6 @@ public class HomeFragment extends Fragment {
     ArrayList<String> list = new ArrayList<>();
     ArrayList<String> weightList = new ArrayList<>();
 
-
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -37,20 +35,21 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//
-        DatabaseHelper mydb = new DatabaseHelper(getActivity());
-
-        // Returns goal weight from the database.
-        Cursor data = mydb.getGoalWeight();
-        while (data.moveToNext()){
-            list.add(data.getString(0));
+        try {
+            DatabaseHelper mydb = new DatabaseHelper(getActivity());
+            // Returns goal weight from the database.
+            Cursor data = mydb.getGoalWeight();
+            while (data.moveToNext()){
+                list.add(data.getString(0));
+            }
+            // Returns current weight from database.
+            Cursor weightData = mydb.getCurrentWeight();
+            while (weightData.moveToNext()){
+                weightList.add(weightData.getString(1));
+            }
+        }catch(Exception e) {
+            Log.d("Error with Home Fragment onCreate ", e.getMessage());
         }
-        // Returns current weight from database.
-        Cursor weightData = mydb.getCurrentWeight();
-        while (weightData.moveToNext()){
-            weightList.add(weightData.getString(1));
-        }
-
     }
 
     @Override
@@ -65,15 +64,17 @@ public class HomeFragment extends Fragment {
         currentWeightValueTextView = view.findViewById(R.id.currentWeightValueTextView);
         goalWeightValueTextView = view.findViewById(R.id.goalWeightValueTextView);
         weightLostValueView = view.findViewById(R.id.weightLostValueView);
+
+        //Set text views
         goalWeightValueTextView.setText((list.get(0)));
+        // Get the last element in ArrayList<String> weightList.
         currentWeightValueTextView.setText(weightList.get(weightList.size()-1));
+
+        // Calculate weight lost. Starting weight from database - last element in weightList.
         int weightLostStart = Integer.parseInt(weightList.get(0));
         int weightLostCurrent = Integer.parseInt(weightList.get(weightList.size()-1));
         String finalLost = String.valueOf(weightLostStart - weightLostCurrent);
         weightLostValueView.setText(finalLost);
-
-
-
 
         enterWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,34 +85,34 @@ public class HomeFragment extends Fragment {
                 enterWeightSubmitButton.setEnabled(true);
                 enterWeightEditText.setVisibility(View.VISIBLE);
                 enterWeightSubmitButton.setVisibility(View.VISIBLE);
-
             }
         });
         enterWeightSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseHelper mydb = new DatabaseHelper(getActivity());
-                mydb.addUserWeight(enterWeightEditText.getText().toString());
-                Cursor weightData = mydb.getCurrentWeight();
-                while (weightData.moveToNext()){
-                    weightList.add(weightData.getString(1));
+                try {
+                    DatabaseHelper mydb = new DatabaseHelper(getActivity());
+                    mydb.addUserWeight(enterWeightEditText.getText().toString());
+                    Cursor weightData = mydb.getCurrentWeight();
+                    while (weightData.moveToNext()){
+                        weightList.add(weightData.getString(1));
+                    }
+                    currentWeightValueTextView.setText(weightList.get(weightList.size()-1));
+                    enterWeightButton.setEnabled(true);
+                    enterWeightButton.setVisibility(View.VISIBLE);
+                    enterWeightEditText.getText().clear();
+                    enterWeightEditText.setEnabled(false);
+                    enterWeightSubmitButton.setEnabled(false);
+                    enterWeightEditText.setVisibility(View.INVISIBLE);
+                    enterWeightSubmitButton.setVisibility(View.INVISIBLE);
+                    //Reloads the fragment after a new weight is entered.
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(HomeFragment.this).attach(HomeFragment.this).commit();
+                }catch (Exception e){
+                    Log.d("Error in Enter Weight Submit Button, ", e.getMessage());
                 }
-                currentWeightValueTextView.setText(weightList.get(weightList.size()-1));
-                enterWeightButton.setEnabled(true);
-                enterWeightButton.setVisibility(View.VISIBLE);
-                enterWeightEditText.getText().clear();
-                enterWeightEditText.setEnabled(false);
-                enterWeightSubmitButton.setEnabled(false);
-                enterWeightEditText.setVisibility(View.INVISIBLE);
-                enterWeightSubmitButton.setVisibility(View.INVISIBLE);
-
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(HomeFragment.this).attach(HomeFragment.this).commit();
-
             }
         });
-
         return view;
     }
-
 }
