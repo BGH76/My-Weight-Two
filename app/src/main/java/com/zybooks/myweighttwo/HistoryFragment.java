@@ -44,7 +44,7 @@ public class HistoryFragment extends Fragment {
                 weightList.add("x");
             }
         }catch (Exception e){
-            Log.d("Error with History Fragment onCreate, ", e.getMessage());
+            Log.d("Error, ","History Fragment onCreate: " + e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class HistoryFragment extends Fragment {
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         ft.detach(HistoryFragment.this).attach(HistoryFragment.this).commit();
                     }catch (Exception e){
-                        Log.d("Error deleting item from history grid fragment, ", e.getMessage());
+                        Log.d("Error, ","deleting item from history grid fragment, " + e.getMessage());
                     }
                 }
             }

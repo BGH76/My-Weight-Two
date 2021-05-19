@@ -90,7 +90,7 @@ public class SettingsFragment extends Fragment {
             settingsFragmentCurrentWeight.setText("Starting Weight: " + listData.get(3));
             settingsFragmentGoalWeight.setText("Goal Weight: " + listData.get(4));
         }catch (Exception e){
-            Log.d("Error in Settings Fragment on Create View, ", e.getMessage());
+            Log.d("Error ", "in Settings Fragment onCreate View" + e.getMessage());
         }
         return view;
     }

@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
                 weightList.add(weightData.getString(1));
             }
         }catch(Exception e) {
-            Log.d("Error with Home Fragment onCreate ", e.getMessage());
+            Log.d("Error ", "with Home Fragment onCreate" + e.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.detach(HomeFragment.this).attach(HomeFragment.this).commit();
                 }catch (Exception e){
-                    Log.d("Error in Enter Weight Submit Button, ", e.getMessage());
+                    Log.d("Error ", "in Enter Weight Submit Button" + e.getMessage());
                 }
             }
         });

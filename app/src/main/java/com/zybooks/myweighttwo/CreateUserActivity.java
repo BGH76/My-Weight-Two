@@ -67,7 +67,7 @@ public class CreateUserActivity extends AppCompatActivity {
                         }
                     }
                 }catch (Exception e) {
-                    Log.d("Error in create User Submit button ", e.getMessage());
+                    Log.d("Error, ", " in create User Submit button" + e.getMessage());
                 }
             }
         });
@@ -78,7 +78,7 @@ public class CreateUserActivity extends AppCompatActivity {
                 try {
                     mydb.deleteData();
                 }catch (Exception e){
-                    Log.d("Error with profile delete button ", e.getMessage());
+                    Log.d("Error  ", "with profile delete button" + e.getMessage());
                 }
             }
         });
