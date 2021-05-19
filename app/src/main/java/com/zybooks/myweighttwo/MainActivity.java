@@ -40,15 +40,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try{
-                    Cursor data2 = mydb.getPasswordData();
+                    Cursor passwordData = mydb.getPasswordData();
+                    Cursor userNameData = mydb.getData();
                     ArrayList<String> listData2 = new ArrayList<>();
-                    while(data2.moveToNext()){
-                        listData2.add(data2.getString(1));
+                    while(passwordData.moveToNext()){
+                        listData2.add(passwordData.getString(1));
                     }
-                    if(password.getText().toString().equals(listData2.get(0))){
+                    while (userNameData.moveToNext()){
+                        listData2.add(userNameData.getString(1).toLowerCase());
+                    }
+                    if(password.getText().toString().equals(listData2.get(0)) &&
+                        username.getText().toString().toLowerCase().equals(listData2.get(1))){
                         openAppActivity();
                     }else{
-                        Toast.makeText(getBaseContext(),"Incorrect Password", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(),"Incorrect User Name or Password", Toast.LENGTH_LONG).show();
                     }
                 }catch (Exception e){
                     Log.d("Error with loginButton", e.getMessage());
