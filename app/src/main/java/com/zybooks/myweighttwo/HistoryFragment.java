@@ -35,10 +35,19 @@ public class HistoryFragment extends Fragment {
         DatabaseHelper mydb = new DatabaseHelper(getActivity());
         try{
             Cursor weightData = mydb.getCurrentWeight();
+            weightList.add("Id"); //Added Id to column header
             weightList.add("Date");
             weightList.add("Weight");
             weightList.add("Delete");
             while (weightData.moveToNext()){
+                /*
+                    Modified algorithm to extract the ID column from the cursor.
+                    This value is now added to the array list. The while loop will
+                    iterate through each column returned by the Cursor. Below the elements
+                    at index 0(id), 2(date), and 1(weight) are added in this order along
+                    with the "x" to represent a delete option.
+                 */
+                weightList.add(weightData.getString(0)); // Getting id data from Cursor and add to ArrayList.
                 weightList.add(weightData.getString(2));
                 weightList.add(weightData.getString(1));
                 weightList.add("x");
@@ -46,6 +55,7 @@ public class HistoryFragment extends Fragment {
         }catch (Exception e){
             Log.d("Error, ","History Fragment onCreate: " + e.getMessage());
         }
+
     }
 
     @Override
@@ -63,14 +73,30 @@ public class HistoryFragment extends Fragment {
                 DatabaseHelper mydb = new DatabaseHelper(getActivity());
                 String gridItem = gridView.getItemAtPosition(position).toString();
                 if(gridItem.equals("x")){
-                    try {
-                        mydb.deleteRow(gridView.getItemAtPosition(position-1).toString());
+                    try {                          // Modify algorithm to access id value.**********
+                        /*
+                        Modification made to the next line. The original was (position - 1). This
+                        would cause the program to access values in the weight column. By changing
+                        to (position - 3) the program will now access values in the Id column. This
+                        returns a value specific to the row and allows the algorithm to delete only
+                        one row of data from the database.
+                         */
+                        mydb.deleteRow(gridView.getItemAtPosition(position-3).toString());
                         adapter.clear();
                         Cursor weightData = mydb.getCurrentWeight();
+                        weightList.add("ID"); // Added Id to column header
                         weightList.add("Date");
                         weightList.add("Weight");
                         weightList.add("Delete");
                         while (weightData.moveToNext()){
+                            /*
+                    Modified algorithm to extract the ID column from the cursor.
+                    This value is now added to the array list. The while loop will
+                    iterate through each column returned by the Cursor. Below the elements
+                    at index 0(id), 2(date), and 1(weight) are added in this order along
+                    with the "x" to represent a delete option.
+                 */
+                            weightList.add(weightData.getString(0)); //Getting id data from Cursor and adding to ArrayList.
                             weightList.add(weightData.getString(2));
                             weightList.add(weightData.getString(1));
                             weightList.add("x");

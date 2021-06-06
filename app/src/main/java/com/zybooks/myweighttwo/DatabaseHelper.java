@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 
 import static java.util.Calendar.DATE;
@@ -113,10 +115,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Method to add user weights.
     public boolean addUserWeight(String weight){
         LocalDate myDate = LocalDate.now();
+        String formattedMyDate = myDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT));
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(WEIGHT, weight);
-        contentValues.put(DATE_ENTERED,String.valueOf(myDate));
+        contentValues.put(DATE_ENTERED,String.valueOf(formattedMyDate));
         long result = db.insert(USER_WEIGHT_TABLE, null, contentValues);
         if(result == -1){
             return false;
@@ -154,8 +157,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     //Method to delete a row from user_weight table.
     public void deleteRow(String item){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM "+USER_WEIGHT_TABLE+ " WHERE weight="+item);
+        SQLiteDatabase db = this.getWritableDatabase();                   // *******************************
+        db.execSQL("DELETE FROM "+USER_WEIGHT_TABLE+ " WHERE ID="+item); // removed weight and changed to ID.
     }
     //Deletes data from all 3 database tables. Originally for testing but kept to delete profile.
     public void deleteData(){

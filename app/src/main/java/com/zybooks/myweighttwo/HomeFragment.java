@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -90,27 +91,33 @@ public class HomeFragment extends Fragment {
         enterWeightSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    DatabaseHelper mydb = new DatabaseHelper(getActivity());
-                    mydb.addUserWeight(enterWeightEditText.getText().toString());
-                    Cursor weightData = mydb.getCurrentWeight();
-                    while (weightData.moveToNext()){
-                        weightList.add(weightData.getString(1));
+                if(enterWeightEditText.getText().toString().isEmpty() ||
+                        enterWeightEditText.getText().toString().length() > 3){
+                    Toast.makeText(getActivity(), "Please enter your Weight.", Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        DatabaseHelper mydb = new DatabaseHelper(getActivity());
+                        mydb.addUserWeight(enterWeightEditText.getText().toString());
+                        Cursor weightData = mydb.getCurrentWeight();
+                        while (weightData.moveToNext()){
+                            weightList.add(weightData.getString(1));
+                        }
+                        currentWeightValueTextView.setText(weightList.get(weightList.size()-1));
+                        enterWeightButton.setEnabled(true);
+                        enterWeightButton.setVisibility(View.VISIBLE);
+                        enterWeightEditText.getText().clear();
+                        enterWeightEditText.setEnabled(false);
+                        enterWeightSubmitButton.setEnabled(false);
+                        enterWeightEditText.setVisibility(View.INVISIBLE);
+                        enterWeightSubmitButton.setVisibility(View.INVISIBLE);
+                        //Reloads the fragment after a new weight is entered.
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.detach(HomeFragment.this).attach(HomeFragment.this).commit();
+                    }catch (Exception e){
+                        Log.d("Error ", "in Enter Weight Submit Button" + e.getMessage());
                     }
-                    currentWeightValueTextView.setText(weightList.get(weightList.size()-1));
-                    enterWeightButton.setEnabled(true);
-                    enterWeightButton.setVisibility(View.VISIBLE);
-                    enterWeightEditText.getText().clear();
-                    enterWeightEditText.setEnabled(false);
-                    enterWeightSubmitButton.setEnabled(false);
-                    enterWeightEditText.setVisibility(View.INVISIBLE);
-                    enterWeightSubmitButton.setVisibility(View.INVISIBLE);
-                    //Reloads the fragment after a new weight is entered.
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.detach(HomeFragment.this).attach(HomeFragment.this).commit();
-                }catch (Exception e){
-                    Log.d("Error ", "in Enter Weight Submit Button" + e.getMessage());
                 }
+
             }
         });
         return view;

@@ -39,24 +39,29 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    Cursor passwordData = mydb.getPasswordData();
-                    Cursor userNameData = mydb.getData();
-                    ArrayList<String> listData2 = new ArrayList<>();
-                    while(passwordData.moveToNext()){
-                        listData2.add(passwordData.getString(1));
+                if(username.getText().toString().length() > 10 ||
+                        password.getText().toString().length() >8){
+                    Toast.makeText(getBaseContext(),"Incorrect User Name or Password", Toast.LENGTH_LONG).show();
+                }else {
+                    try{
+                        Cursor passwordData = mydb.getPasswordData();
+                        Cursor userNameData = mydb.getData();
+                        ArrayList<String> listData2 = new ArrayList<>();
+                        while(passwordData.moveToNext()){
+                            listData2.add(passwordData.getString(1));
+                        }
+                        while (userNameData.moveToNext()){
+                            listData2.add(userNameData.getString(1).toLowerCase());
+                        }
+                        if(password.getText().toString().equals(listData2.get(0)) &&
+                                username.getText().toString().toLowerCase().equals(listData2.get(1))){
+                            openAppActivity();
+                        }else{
+                            Toast.makeText(getBaseContext(),"Incorrect User Name or Password", Toast.LENGTH_LONG).show();
+                        }
+                    }catch (Exception e){
+                        Log.d("Error with loginButton", e.getMessage());
                     }
-                    while (userNameData.moveToNext()){
-                        listData2.add(userNameData.getString(1).toLowerCase());
-                    }
-                    if(password.getText().toString().equals(listData2.get(0)) &&
-                        username.getText().toString().toLowerCase().equals(listData2.get(1))){
-                        openAppActivity();
-                    }else{
-                        Toast.makeText(getBaseContext(),"Incorrect User Name or Password", Toast.LENGTH_LONG).show();
-                    }
-                }catch (Exception e){
-                    Log.d("Error with loginButton", e.getMessage());
                 }
             }
         });
