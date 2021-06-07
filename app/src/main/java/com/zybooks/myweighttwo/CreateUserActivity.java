@@ -96,8 +96,6 @@ public class CreateUserActivity extends AppCompatActivity {
                         Log.d("Error, ", " in create User Submit button" + e.getMessage());
                     }
                 }
-
-
             }
         });
 

@@ -91,8 +91,18 @@ public class HomeFragment extends Fragment {
         enterWeightSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean numCheck = true;
+                for(int i=0; i<1000; i++){
+                    if(String.valueOf(i).equals(enterWeightEditText.getText().toString())){
+                        numCheck = true;
+                        break;
+                    }else{
+                        numCheck = false;
+                    }
+                }
+
                 if(enterWeightEditText.getText().toString().isEmpty() ||
-                        enterWeightEditText.getText().toString().length() > 3){
+                        enterWeightEditText.getText().toString().length() > 3 || !numCheck){
                     Toast.makeText(getActivity(), "Please enter your Weight.", Toast.LENGTH_SHORT).show();
                 }else{
                     try {
@@ -117,7 +127,6 @@ public class HomeFragment extends Fragment {
                         Log.d("Error ", "in Enter Weight Submit Button" + e.getMessage());
                     }
                 }
-
             }
         });
         return view;
